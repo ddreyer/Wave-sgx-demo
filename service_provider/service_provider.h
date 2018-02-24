@@ -154,6 +154,10 @@ typedef struct sample_extended_epid_group
     sample_verify_attestation_evidence verify_attestation_evidence;
 } sample_extended_epid_group;
 
+
+/* Wave demo code */
+// int sp_ra_proc_cipher_req();
+
 #ifdef  __cplusplus
 }
 #endif

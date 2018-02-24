@@ -46,6 +46,7 @@ typedef enum _ra_msg_type_t
      TYPE_RA_MSG2,
      TYPE_RA_MSG3,
      TYPE_RA_ATT_RESULT,
+     TYPE_RA_CIPHER,
 }ra_msg_type_t;
 
 /* Enum for all possible message types between the SP and IAS.
@@ -87,6 +88,7 @@ int ra_network_send_receive(const char *server_url,
                             const ra_samp_request_header_t *req,
                             ra_samp_response_header_t **p_resp);
 void ra_free_network_response_buffer(ra_samp_response_header_t *resp);
+
 
 #ifdef  __cplusplus
 }

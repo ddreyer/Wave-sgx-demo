@@ -184,6 +184,8 @@ int main(int argc, char* argv[])
     sgx_status_t status = SGX_SUCCESS;
     ra_samp_request_header_t* p_msg3_full = NULL;
 
+    ra_samp_request_header_t *p_cipher_request = NULL;
+
     int32_t verify_index = -1;
     int32_t verification_samples = sizeof(msg1_samples)/sizeof(msg1_samples[0]);
 
@@ -678,17 +680,23 @@ int main(int argc, char* argv[])
         fprintf(OUTPUT, "\nRemote attestation success!");
 
 
-        // ra_samp_request_header_t *p_cipher_request = NULL;
-        // ra_samp_response_header_t *p_cipher_response = NULL;
-        // ret = ra_network_send_receive("http://SampleServiceProvider.intel.com/",
-        //                               p_cipher_request,
-        //                               &p_cipher_response);
-        // if(ret || !p_att_result_msg_full)
-        // {
-        //     ret = -1;
-        //     fprintf(OUTPUT, "\nError, sending cipher request failed [%s].", __FUNCTION__);
-        //     goto CLEANUP;
-        // }
+        /* Wave demo code */
+
+        // attestation passed, request the cipher
+        p_cipher_request = (ra_samp_request_header_t*)
+                      malloc(sizeof(ra_samp_request_header_t));
+        p_cipher_request->type = TYPE_RA_CIPHER;
+        p_msg1_full->size = 0;
+        ra_samp_response_header_t *p_cipher_response = NULL;
+        ret = ra_network_send_receive("http://SampleServiceProvider.intel.com/",
+                                      p_cipher_request,
+                                      &p_cipher_response);
+        if(ret || !p_cipher_response)
+        {
+            ret = -1;
+            fprintf(OUTPUT, "\nError, sending cipher request failed [%s].", __FUNCTION__);
+            goto CLEANUP;
+        }
 
     
         // // char* ret = (char *) malloc(50);
@@ -733,6 +741,7 @@ CLEANUP:
     SAFE_FREE(p_msg3_full);
     SAFE_FREE(p_msg1_full);
     SAFE_FREE(p_msg0_full);
+    SAFE_FREE(p_cipher_request);
     printf("\nEnter a character before exit ...\n");
     getchar();
     return ret;

@@ -689,6 +689,8 @@ int main(int argc, char* argv[])
         p_cipher_request->type = TYPE_RA_CIPHER;
         p_msg1_full->size = 0;
         ra_samp_response_header_t *p_cipher_response = NULL;
+
+        // request and receive the cipher
         ret = ra_network_send_receive("http://SampleServiceProvider.intel.com/",
                                       p_cipher_request,
                                       &p_cipher_response);
@@ -705,12 +707,13 @@ int main(int argc, char* argv[])
                 p_cipher_response->body);
         }
 
+        // pass cipher into enclave to decrypt
         sgx_status_t status = ecall_check_message(enclave_id, &status, p_cipher_response->body);
         
         if (SGX_SUCCESS != ret || status != SGX_SUCCESS)
         {
             ret = -1;
-            fprintf(OUTPUT, "\nError: checking chiper failed [%s].", __FUNCTION__);
+            fprintf(OUTPUT, "\nError: checking cipher failed [%s].", __FUNCTION__);
             goto CLEANUP;
         }
 

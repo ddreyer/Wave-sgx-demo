@@ -1182,6 +1182,7 @@ int sp_ra_proc_cipher_req(ra_samp_response_header_t **pp_cipher_result_msg)
     p_cipher_msg_full->type = TYPE_RA_CIPHER;
     p_cipher_msg_full->size = cipher_msg_size;
 
+    // put message into response
     if (memcpy_s(&p_cipher_msg_full->body, cipher_msg_size, &in,
                      cipher_msg_size))
     {

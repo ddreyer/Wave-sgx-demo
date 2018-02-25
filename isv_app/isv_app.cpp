@@ -681,6 +681,7 @@ int main(int argc, char* argv[])
 
 
         /* Wave demo code */
+        fprintf(OUTPUT, "\n\nWAVE demo code starting");
 
         // attestation passed, request the cipher
         p_cipher_request = (ra_samp_request_header_t*)
@@ -698,12 +699,20 @@ int main(int argc, char* argv[])
             goto CLEANUP;
         }
 
-    
-        // // char* ret = (char *) malloc(50);
-        // sgx_status_t status = ecall_check_message(global_eid, buf);
+        if (p_cipher_response->type == TYPE_RA_CIPHER)
+        {
+            fprintf(OUTPUT, "Received the cipher in the client: %s\n", 
+                p_cipher_response->body);
+        }
+
+        sgx_status_t status = ecall_check_message(enclave_id, &status, p_cipher_response->body);
         
-        // if (is_ecall_successful(status, "Bad"))
-        //     printf("successful ecall\n\n");
+        if (SGX_SUCCESS != ret || status != SGX_SUCCESS)
+        {
+            ret = -1;
+            fprintf(OUTPUT, "\nError: checking chiper failed [%s].", __FUNCTION__);
+            goto CLEANUP;
+        }
 
     }
 

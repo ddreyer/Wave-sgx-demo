@@ -819,13 +819,14 @@ void AES_ECB_decrypt(struct AES_ctx* ctx,const uint8_t* buf)
   InvCipher((state_t*)buf, ctx->RoundKey);
 }
 
-void ecall_check_message(char* str) {
+sgx_status_t ecall_check_message(uint8_t* str) {
     ocall_print("Encrypted string in the enclave: ");
-    ocall_print(str);
+    ocall_print((char *) str);
     struct AES_ctx ctx;
     uint8_t key[] = { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c };
     AES_init_ctx(&ctx, key);
-    AES_ECB_decrypt(&ctx, (uint8_t *) str);
+    AES_ECB_decrypt(&ctx, str);
     ocall_print("Decrypted string in the enclave: ");
-    ocall_print(str);
+    ocall_print((char *) str);
+    return SGX_SUCCESS;
 }

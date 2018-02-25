@@ -110,8 +110,18 @@ int ra_network_send_receive(const char *server_url,
         break;
 
     case TYPE_RA_CIPHER:
-        // ret = sp_ra_proc_cipher_req();
-        printf("Got the cipher request\n");
+        printf("\nReceived the cipher request from the enclave application\n");
+        ret = sp_ra_proc_cipher_req(&p_resp_msg);
+        if (ret != 0)
+        {
+            fprintf(stderr, "\nError, call sp_ra_proc_cipher_req fail [%s].",
+                __FUNCTION__);
+        }
+        else
+        {
+            *p_resp = p_resp_msg;
+        }
+        break;
     default:
         ret = -1;
         fprintf(stderr, "\nError, unknown ra message type. Type = %d [%s].",

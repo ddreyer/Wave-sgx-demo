@@ -156,7 +156,7 @@ typedef struct sample_extended_epid_group
 
 
 /* Wave demo code */
-// int sp_ra_proc_cipher_req();
+int sp_ra_proc_cipher_req(ra_samp_response_header_t **pp_cipher_result_msg);
 
 #ifdef  __cplusplus
 }

@@ -1,6 +1,6 @@
 # Intel SGX WAVE Demo
 
-Sample code taken from the Intel SGX remote attestation [example](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example), [Tiny AES in C](https://github.com/kokke/tiny-AES-c), and this simple [UDP client](https://www.cs.cmu.edu/afs/cs/academic/class/15213-f99/www/class26/udpclient.c)
+Sample code taken from the Intel SGX remote attestation [example](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) and [Tiny AES in C](https://github.com/kokke/tiny-AES-c)l
 
 ### Remote Attestation Simulation Notes
 * "network_ra.cpp" simulates network communication between the enclave app (ISV app) and the client/challenger (service provider)

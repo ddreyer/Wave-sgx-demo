@@ -48,7 +48,8 @@ enclave {
                                             [in,size=secret_size] uint8_t* p_secret,
                                             uint32_t secret_size,
                                             [in,count=16] uint8_t* gcm_mac);
-        public sgx_status_t ecall_check_message([in, string] uint8_t* str);
+        public sgx_status_t ecall_check_message([in,size=cipher_size] uint8_t* str,
+                                            size_t cipher_size);
     };
 
     untrusted {

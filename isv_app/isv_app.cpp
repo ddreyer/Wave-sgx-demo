@@ -55,7 +55,7 @@
 // Needed to query extended epid group id.
 #include "sgx_uae_service.h"
 
-#include "service_provider.h"
+#include "client.h"
 
 #ifndef SAFE_FREE
 #define SAFE_FREE(ptr) {if (NULL != (ptr)) {free(ptr); (ptr) = NULL;}}
@@ -703,12 +703,12 @@ int main(int argc, char* argv[])
 
         if (p_cipher_response->type == TYPE_RA_CIPHER)
         {
-            fprintf(OUTPUT, "Received the cipher in the client: %s\n", 
-                p_cipher_response->body);
+            fprintf(OUTPUT, "Received the cipher in the client\n");
         }
 
         // pass cipher into enclave to decrypt
-        sgx_status_t status = ecall_check_message(enclave_id, &status, p_cipher_response->body);
+        sgx_status_t status = ecall_check_message(enclave_id, &status, p_cipher_response->body,
+            p_cipher_response->size);
         
         if (SGX_SUCCESS != ret || status != SGX_SUCCESS)
         {

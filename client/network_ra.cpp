@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "network_ra.h"
-#include "service_provider.h"
+#include "client.h"
 
 
 // Used to send requests to the service provider sample.  It

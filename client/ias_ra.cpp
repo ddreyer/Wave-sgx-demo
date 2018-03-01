@@ -31,7 +31,7 @@
 
 
 
-#include "service_provider.h"
+#include "client.h"
 #include "sample_libcrypto.h"
 #include "ecp.h"
 #include <stdio.h>

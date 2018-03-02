@@ -683,11 +683,36 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
 
         /*
          * Verify the contents of the enclave match what is expected
-         * by comparing MRENCLAVE values with the known has of the enclave
+         * by comparing MRENCLAVE values. In production, client would have
+         * to store the correct expected_enclave_value
         */
 
-        bool isv_policy_passed = true;
-        fprintf(OUTPUT, "\nClient: enclave measurement matches the expected value\n");
+        uint8_t expected_enclave_measurement[SAMPLE_HASH_SIZE];
+
+        // this line is to allow the measurement to pass in the demo
+        memcpy_s(expected_enclave_measurement, sizeof(sample_measurement_t), 
+            p_quote->report_body.mr_enclave, sizeof(sample_measurement_t));
+
+        fprintf(OUTPUT, "\nClient: expected enclave measurement:\n");
+        for (i=0; i<sizeof(sample_measurement_t); i++)
+        {
+            fprintf(OUTPUT, "%02x",expected_enclave_measurement[i]);
+        }
+
+        bool client_policy_passed;
+        ret = memcmp(expected_enclave_measurement, p_quote->report_body.mr_enclave, sizeof(sample_measurement_t));
+        if (ret)
+        {
+            client_policy_passed = false;
+            fprintf(stderr, "\nError: enclave measurement does not match the expected value\n");
+            ret = SP_INTEGRITY_FAILED;
+            break;
+        }
+        else
+        {
+            client_policy_passed = true;
+            fprintf(OUTPUT, "\nClient: enclave measurement matches the expected value\n");
+        }
 
         // Assemble Attestation Result Message
         // Note, this is a structure copy.  We don't copy the policy reports
@@ -712,7 +737,7 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
         p_att_result_msg->secret.payload_size = 8;
         if((IAS_QUOTE_OK == attestation_report.status) &&
            (IAS_PSE_OK == attestation_report.pse_status) &&
-           (isv_policy_passed == true))
+           (client_policy_passed == true))
         {
             ret = sample_rijndael128GCM_encrypt(&g_sp_db.sk_key,
                         &g_secret[0],

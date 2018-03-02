@@ -505,7 +505,7 @@ char *rsa_decrypt(const long long *message,
 /* Enclave message verification */
 sgx_status_t ecall_check_message(uint8_t *str, size_t cipher_size) 
 {
-    ocall_print("Inside enclave to decrypt the message");
+    ocall_print("Enclave: Inside enclave to decrypt the message");
     struct private_key_class priv[1];
     // private key hardcoded into enclave
     priv->modulus = 2748616711;
@@ -520,7 +520,7 @@ sgx_status_t ecall_check_message(uint8_t *str, size_t cipher_size)
         // fprintf(stderr, "Error in decryption!\n");
         return SGX_ERROR_UNEXPECTED;
     }
-    ocall_print("Decrypted string in the enclave: ");
+    ocall_print("Enclave: Decrypted string in the enclave:\n");
     ocall_print(decrypted);
     free(decrypted);
     return SGX_SUCCESS;

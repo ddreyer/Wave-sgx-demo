@@ -110,6 +110,7 @@ uint8_t g_secret[8] = {0,1,2,3,4,5,6,7};
 
 sample_spid_t g_spid;
 
+FILE* OUTPUT = stdout;
 
 // Verify message 0 then configure extended epid group.
 int sp_ra_proc_msg0_req(const sample_ra_msg0_t *p_msg0,
@@ -183,7 +184,9 @@ int sp_ra_proc_msg1_req(const sample_ra_msg1_t *p_msg1,
         return -1;
     }
 
+    fprintf(OUTPUT, "\nClient: verifying message 1 and generating DHKE response/msg2\n");
     // Check to see if we have registered?
+
     if (!g_is_sp_registered)
     {
         return SP_UNSUPPORTED_EXTENDED_EPID_GROUP;
@@ -456,6 +459,8 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
         return SP_INTERNAL_ERROR;
     }
 
+    fprintf(OUTPUT, "\nClient: verifying signature of quote and contents of the enclave\n");
+
     // Check to see if we have registered?
     if (!g_is_sp_registered)
     {
@@ -576,7 +581,7 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
         // Verify Enclave policy (an attestation server may provide an API for this if we
         // registered an Enclave policy)
 
-        // Verify quote with attestation server.
+        // Verify quote signature with attestation server.
         // In the product, an attestation server could use a REST message and JSON formatting to request
         // attestation Quote verification.  The sample only simulates this interface.
         ias_att_report_t attestation_report = {0};
@@ -587,8 +592,8 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
             ret = SP_IAS_FAILED;
             break;
         }
-        FILE* OUTPUT = stdout;
-        fprintf(OUTPUT, "\n\n\tAtestation Report:");
+        fprintf(OUTPUT, "\n\nClient: received msg3, here are some of its contents:");
+        fprintf(OUTPUT, "\n\n\tAttestation Report:");
         fprintf(OUTPUT, "\n\tid: 0x%0x.", attestation_report.id);
         fprintf(OUTPUT, "\n\tstatus: %d.", attestation_report.status);
         fprintf(OUTPUT, "\n\trevocation_reason: %u.",
@@ -676,12 +681,13 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
         fprintf(OUTPUT, "\n\tisv_svn: 0x%0x",p_quote->report_body.isv_svn);
         fprintf(OUTPUT, "\n");
 
-        // A product service provider needs to verify that its enclave properties 
-        // match what is expected.  The SP needs to check these values before
-        // trusting the enclave.  For the sample, we always pass the policy check.
-        // Attestation server only verifies the quote structure and signature.  It does not 
-        // check the identity of the enclave.
+        /*
+         * Verify the contents of the enclave match what is expected
+         * by comparing MRENCLAVE values with the known has of the enclave
+        */
+
         bool isv_policy_passed = true;
+        fprintf(OUTPUT, "\nClient: enclave measurement matches the expected value\n");
 
         // Assemble Attestation Result Message
         // Note, this is a structure copy.  We don't copy the policy reports
@@ -844,7 +850,7 @@ int sp_ra_proc_cipher_req(ra_samp_response_header_t **pp_cipher_result_msg)
     char message[] = "hello sgx world";
   
     // encrypt message
-    printf("Encrypting \"%s\"\n", message);
+    fprintf(OUTPUT, "Client: Encrypting \"%s\"\n", message);
     long long *encrypted = rsa_encrypt(message, sizeof(message), pub);
     if (!encrypted)
     {

@@ -1,4 +1,5 @@
 # Intel SGX WAVE Demo
+This demo simulates the interaction between WAVE client and enclave.
 
 Sample code taken from the Intel SGX remote attestation [example](https://software.intel.com/en-us/articles/intel-software-guard-extensions-remote-attestation-end-to-end-example) and [RSA-Library](https://github.com/andrewkiluk/RSA-Library)
 
@@ -8,7 +9,8 @@ Sample code taken from the Intel SGX remote attestation [example](https://softwa
 * "isv_app.cpp" simulates the enclave app (ISV app). Some features are not fully implemented to production standards
 
 ### Todo
-* Generate enclave signature using command line such that client can match it to the quote given by the enclave
+* Have client generate MRENCLAVE value for enclave measurement comparison
+* Seal the Enclave's private key
 
 ### How to generate the enclave signature
 $ sgx_sign sign -key isv_enclave/isv_enclave_private.pem -enclave isv_enclave.so -out isv_enclave.signed.so -config isv_enclave/isv_enclave.config.xml 

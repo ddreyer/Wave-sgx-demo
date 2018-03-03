@@ -690,6 +690,7 @@ int sp_ra_proc_msg3_req(const sample_ra_msg3_t *p_msg3,
         uint8_t expected_enclave_measurement[SAMPLE_HASH_SIZE];
 
         // this line is to allow the measurement to pass in the demo
+        // TODO: generate actual MRENCLAVE in client
         memcpy_s(expected_enclave_measurement, sizeof(sample_measurement_t), 
             p_quote->report_body.mr_enclave, sizeof(sample_measurement_t));
 
@@ -868,8 +869,14 @@ int sp_ra_proc_cipher_req(ra_samp_response_header_t **pp_cipher_result_msg)
     ra_samp_response_header_t* p_cipher_msg_full = NULL;
     int ret = 0;
 
+    fprintf(OUTPUT, "\nClient: Received request for the cipher from the enclave application\n");
+
     struct public_key_class pub[1];
-    // public key hardcoded into client
+    /* 
+     * Enclave's public key hardcoded into client
+     * In production, public key would be obtained and possibly 
+     * verified with a certificate
+    */
     pub->modulus = 2748616711;
     pub->exponent = 257;
     char message[] = "hello sgx world";

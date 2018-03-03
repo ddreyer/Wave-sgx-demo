@@ -166,7 +166,7 @@ void PRINT_ATTESTATION_SERVICE_RESPONSE(
 }
 
 bool client_initiate_connection() {
-    fprintf(OUTPUT, "Client initiates a connection to the enclave application\n");
+    fprintf(OUTPUT, "Client initiates a connection to the Enclave app\n");
         // switch to determine if client wants to do remote attestation
     bool remote_attest_bool = false;
     return remote_attest_bool;
@@ -229,7 +229,7 @@ int main(int argc, char* argv[])
 
     /* 
      * In production, a client would initiate a secure network connection with the 
-     * enclave application here. For demo purposes, we will simulate this through
+     * Enclave app here. For demo purposes, we will simulate this through
      * this function call. The return boolean simulates if the client would like to 
      * invoke a remote attestation of the enclave.
     */    
@@ -246,7 +246,7 @@ int main(int argc, char* argv[])
                 __FUNCTION__);
             return ret;
         }
-        fprintf(OUTPUT, "\nEnclave application: successfully obtained the extended EPID group ID.");
+        fprintf(OUTPUT, "\nEnclave app: successfully obtained the extended EPID group ID.");
 
         p_msg0_full = (ra_samp_request_header_t*)
             malloc(sizeof(ra_samp_request_header_t)
@@ -267,9 +267,9 @@ int main(int argc, char* argv[])
             PRINT_BYTE_ARRAY(OUTPUT, p_msg0_full->body, p_msg0_full->size);
 
         }
-        // The enclave application sends msg0 to the client.
+        // The Enclave app sends msg0 to the client.
         // The encalve application decides whether to support this extended epid group id.
-        fprintf(OUTPUT, "\nEnclave application: sending msg0 to client.\n");
+        fprintf(OUTPUT, "\nEnclave app: sending msg0 to client.\n");
 
         ret = ra_network_send_receive("http://SampleServiceProvider.intel.com/",
             p_msg0_full,
@@ -280,7 +280,7 @@ int main(int argc, char* argv[])
                 "[%s].", __FUNCTION__);
             goto CLEANUP;
         }
-        fprintf(OUTPUT, "\nEnclave application: sent msg0 to client.\n");
+        fprintf(OUTPUT, "\nEnclave app: sent msg0 to client.\n");
     }
 
 
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
     fprintf(OUTPUT, "\nClient verifies msg0/Extended GID, chooses to proceed\n");
 
     {
-        // Enclave application creates the enclave.
+        // Enclave app creates the enclave.
         int launch_token_update = 0;
         sgx_launch_token_t launch_token = {0};
         memset(&launch_token, 0, sizeof(sgx_launch_token_t));
@@ -307,7 +307,7 @@ int main(int argc, char* argv[])
                     __FUNCTION__);
             goto CLEANUP;
         }
-        fprintf(OUTPUT, "\nEnclave application: sgx_create_enclave success");
+        fprintf(OUTPUT, "\nEnclave app: sgx_create_enclave success");
 
         ret = enclave_init_ra(enclave_id,
                               &status,
@@ -321,11 +321,11 @@ int main(int argc, char* argv[])
                     __FUNCTION__);
             goto CLEANUP;
         }
-        fprintf(OUTPUT, "\nEnclave application: Call enclave_init_ra success.");
+        fprintf(OUTPUT, "\nEnclave app: Call enclave_init_ra success.");
 
-        fprintf(OUTPUT, "\nEnclave application: Starting to populate msg1/start DHKE");
+        fprintf(OUTPUT, "\nEnclave app: Starting to populate msg1/start DHKE");
 
-        // enclave application call uke sgx_ra_get_msg1
+        // Enclave app call uke sgx_ra_get_msg1
         p_msg1_full = (ra_samp_request_header_t*)
                       malloc(sizeof(ra_samp_request_header_t)
                              + sizeof(sgx_ra_msg1_t));
@@ -353,7 +353,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            fprintf(OUTPUT, "\nEnclave application: call sgx_ra_get_msg1 success.\n");
+            fprintf(OUTPUT, "\nEnclave app: call sgx_ra_get_msg1 success.\n");
 
             fprintf(OUTPUT, "\nMSG1 body generated -\n");
 
@@ -375,9 +375,9 @@ int main(int argc, char* argv[])
         }
 
 
-        // The enclave application sends msg1 to the client to get msg2,
-        // The enclave application decides whether to use linkable or unlinkable signatures. ??
-        fprintf(OUTPUT, "\nEnclave application: Sending msg1 to client\n");
+        // The Enclave app sends msg1 to the client to get msg2,
+        // The Enclave app decides whether to use linkable or unlinkable signatures. ??
+        fprintf(OUTPUT, "\nEnclave app: Sending msg1 to client\n");
 
 
         ret = ra_network_send_receive("http://SampleServiceProvider.intel.com/",
@@ -441,7 +441,7 @@ int main(int argc, char* argv[])
                 }
             }
 
-            fprintf(OUTPUT, "\nEnclave application: Sent MSG1 to client, received the following MSG2:\n");
+            fprintf(OUTPUT, "\nEnclave app: Sent MSG1 to client, received the following MSG2:\n");
             PRINT_BYTE_ARRAY(OUTPUT, p_msg2_full,
                              sizeof(ra_samp_response_header_t)
                              + p_msg2_full->size);
@@ -534,7 +534,7 @@ int main(int argc, char* argv[])
             }
             else
             {
-                fprintf(OUTPUT, "\nEnclave application: Processed msg2 successfully and generated msg3 which contains the report of the enclave\n");
+                fprintf(OUTPUT, "\nEnclave app: Processed msg2 successfully and generated msg3 which contains the report of the enclave\n");
                 fprintf(OUTPUT, "\nMSG3 - \n");
             }
         }
@@ -558,7 +558,7 @@ int main(int argc, char* argv[])
             goto CLEANUP;
         }
 
-        // The enclave application sends msg3 to the client to get the attestation
+        // The Enclave app sends msg3 to the client to get the attestation
         // result message, attestation result message needs to be freed when
         // no longer needed. The ISV service provider decides whether to use
         // linkable or unlinkable signatures. The format of the attestation
@@ -591,7 +591,7 @@ int main(int argc, char* argv[])
         }
         else
         {
-            fprintf(OUTPUT, "\nEnclave application: received an attestation "
+            fprintf(OUTPUT, "\nEnclave app: received an attestation "
                             "result message back from the client\n.");
             if( VERIFICATION_INDEX_IS_VALID() )
             {
@@ -690,11 +690,11 @@ int main(int argc, char* argv[])
                 goto CLEANUP;
             }
         }
-        fprintf(OUTPUT, "\nEnclave application: Shared secret successfully received from client.");
-        fprintf(OUTPUT, "\nEnclave application: Remote attestation success!");
+        fprintf(OUTPUT, "\nEnclave app: Shared secret successfully received from client.");
+        fprintf(OUTPUT, "\nEnclave app: Remote attestation success!");
 
         /* Wave demo code */
-        fprintf(OUTPUT, "\n\nEnclave application: WAVE demo code starting");
+        fprintf(OUTPUT, "\n\nEnclave app: WAVE demo code starting");
 
         // attestation passed, request the cipher
         p_cipher_request = (ra_samp_request_header_t*)
@@ -716,7 +716,7 @@ int main(int argc, char* argv[])
 
         if (p_cipher_response->type == TYPE_RA_CIPHER)
         {
-            fprintf(OUTPUT, "Enclave application: Received the cipher in the enclave application\n");
+            fprintf(OUTPUT, "Enclave app: Received the cipher in the Enclave app\n");
         }
 
         // pass cipher into enclave to decrypt
@@ -750,7 +750,7 @@ CLEANUP:
             // led us to this point in the code.
             ret = ret_save;
         }
-        fprintf(OUTPUT, "\nCall enclave_ra_close success.");
+        fprintf(OUTPUT, "\nEnclave app: Call enclave_ra_close success.");
     }
 
     sgx_destroy_enclave(enclave_id);

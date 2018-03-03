@@ -10,7 +10,7 @@ Sample code taken from the Intel SGX remote attestation [example](https://softwa
 
 ### Todo
 * Have client generate MRENCLAVE value for enclave measurement comparison
-* Seal the Enclave's private key
+* Seal the Enclave's private key (can use Time based/Replay protected methods for better security)
 
 ### How to generate the enclave signature
 $ sgx_sign sign -key isv_enclave/isv_enclave_private.pem -enclave isv_enclave.so -out isv_enclave.signed.so -config isv_enclave/isv_enclave.config.xml 

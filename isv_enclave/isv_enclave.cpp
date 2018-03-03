@@ -508,6 +508,7 @@ sgx_status_t ecall_check_message(uint8_t *str, size_t cipher_size)
     ocall_print("Enclave: Inside enclave to decrypt the message");
     struct private_key_class priv[1];
     // private key hardcoded into enclave
+    // TODO: seal private key and unseal it to access it
     priv->modulus = 2748616711;
     priv->exponent = 983901665;
   

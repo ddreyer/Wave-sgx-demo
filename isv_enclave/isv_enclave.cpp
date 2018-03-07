@@ -34,6 +34,7 @@
 #include "isv_enclave_t.h"
 #include "sgx_tkey_exchange.h"
 #include "sgx_tcrypto.h"
+#include "sgx_tseal.h"
 #include "string.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -70,6 +71,7 @@ static const sgx_ec256_public_t g_sp_pub_key = {
 // 0x01,0x02,0x03,0x04,0x0x5,0x0x6,0x0x7
 uint8_t g_secret[8] = {0};
 
+uint8_t *sealed_data;
 
 #ifdef SUPPLIED_KEY_DERIVATION
 
@@ -502,23 +504,55 @@ char *rsa_decrypt(const long long *message,
 }
 /* end RSA C library code */
 
+/* Create the enclave asymmetric keys and seal the private key */
+sgx_status_t ecall_create_keys()
+{
+    // TODO: create real keys
+    // for now, hardcoding in the private key to demonstrate sealing capabilities
+    struct private_key_class priv[1];
+    priv->modulus = 2748616711;
+    priv->exponent = 983901665;
+    size_t sealed_size = sizeof(sgx_sealed_data_t) + sizeof(struct private_key_class);
+    sealed_data = (uint8_t *) malloc(sealed_size);
+    sgx_status_t status = sgx_seal_data(0, NULL, sizeof(struct private_key_class), 
+        (uint8_t *) priv, sealed_size, (sgx_sealed_data_t *)sealed_data);
+    // struct private_key_class priv[1];
+    // unseal private key for use decrypting
+    uint32_t plaintext_size = sizeof(struct private_key_class);
+    status = sgx_unseal_data((sgx_sealed_data_t *) sealed_data, NULL, NULL, 
+        (uint8_t*) &priv, &plaintext_size);
+
+    if (!status)
+    {
+        ocall_print("Bad bad");
+        return status;
+    }
+    return status;
+}
+
 /* Enclave message verification */
 sgx_status_t ecall_check_message(uint8_t *str, size_t cipher_size) 
 {
     ocall_print("Enclave: Inside enclave to decrypt the message");
+
     struct private_key_class priv[1];
-    // private key hardcoded into enclave
-    // TODO: seal private key and unseal it to access it
-    priv->modulus = 2748616711;
-    priv->exponent = 983901665;
+    // unseal private key for use decrypting
+    uint32_t plaintext_size = sizeof(struct private_key_class);
+    sgx_status_t status = sgx_unseal_data((sgx_sealed_data_t *) sealed_data, NULL, NULL, 
+        (uint8_t*) &priv, &plaintext_size);
+
+    if (status != SGX_SUCCESS)
+    {
+        return status;
+    }
   
+    ocall_print("Enclave: Unsealing key success");
     long long *cipher = (long long *) str;
 
     // decrypt message
     char *decrypted = rsa_decrypt(cipher, cipher_size, priv);
     if (!decrypted)
     {
-        // fprintf(stderr, "Error in decryption!\n");
         return SGX_ERROR_UNEXPECTED;
     }
     ocall_print("Enclave: Decrypted string in the enclave:\n");

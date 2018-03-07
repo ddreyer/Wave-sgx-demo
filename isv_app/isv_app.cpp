@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
     }
 
     /* 
-     * In production, a client would initiate a secure network connection with the 
+     * TODO: In production, a client would initiate a secure network connection with the 
      * Enclave app here. For demo purposes, we will simulate this through
      * this function call. The return boolean simulates if the client would like to 
      * invoke a remote attestation of the enclave.
@@ -695,6 +695,16 @@ int main(int argc, char* argv[])
 
         /* Wave demo code */
         fprintf(OUTPUT, "\n\nEnclave app: WAVE demo code starting");
+
+        // create keys
+        ecall_create_keys(enclave_id, &status);
+        if (SGX_SUCCESS != ret || status != SGX_SUCCESS)
+        {
+            ret = -1;
+            fprintf(OUTPUT, "\nError: creating asymmetric keys failed [%s].", __FUNCTION__);
+            goto CLEANUP;
+        }
+        fprintf(OUTPUT, "\nEnclave app: Asymmetric enclave keys created");
 
         // attestation passed, request the cipher
         p_cipher_request = (ra_samp_request_header_t*)

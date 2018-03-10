@@ -507,7 +507,9 @@ char *rsa_decrypt(const long long *message,
 /* Create the enclave asymmetric keys and seal the private key */
 sgx_status_t ecall_create_keys()
 {
-    // TODO: create real keys
+    // TODO: create real keys here, solicit public key
+
+
     // for now, hardcoding in the private key to demonstrate sealing capabilities
     struct private_key_class priv[1];
     priv->modulus = 2748616711;
@@ -516,17 +518,6 @@ sgx_status_t ecall_create_keys()
     sealed_data = (uint8_t *) malloc(sealed_size);
     sgx_status_t status = sgx_seal_data(0, NULL, sizeof(struct private_key_class), 
         (uint8_t *) priv, sealed_size, (sgx_sealed_data_t *)sealed_data);
-    // struct private_key_class priv[1];
-    // unseal private key for use decrypting
-    uint32_t plaintext_size = sizeof(struct private_key_class);
-    status = sgx_unseal_data((sgx_sealed_data_t *) sealed_data, NULL, NULL, 
-        (uint8_t*) &priv, &plaintext_size);
-
-    if (!status)
-    {
-        ocall_print("Bad bad");
-        return status;
-    }
     return status;
 }
 

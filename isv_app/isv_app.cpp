@@ -673,23 +673,23 @@ int main(int argc, char* argv[])
 
         // Get the shared secret sent by the server using SK (if attestation
         // passed)
-        if(attestation_passed)
-        {
-            ret = put_secret_data(enclave_id,
-                                  &status,
-                                  context,
-                                  p_att_result_msg_body->secret.payload,
-                                  p_att_result_msg_body->secret.payload_size,
-                                  p_att_result_msg_body->secret.payload_tag);
-            if((SGX_SUCCESS != ret)  || (SGX_SUCCESS != status))
-            {
-                fprintf(OUTPUT, "\nError, attestation result message secret "
-                                "using SK based AESGCM failed in [%s]. ret = "
-                                "0x%0x. status = 0x%0x", __FUNCTION__, ret,
-                                 status);
-                goto CLEANUP;
-            }
-        }
+        // if(attestation_passed)
+        // {
+        //     ret = put_secret_data(enclave_id,
+        //                           &status,
+        //                           context,
+        //                           p_att_result_msg_body->secret.payload,
+        //                           p_att_result_msg_body->secret.payload_size,
+        //                           p_att_result_msg_body->secret.payload_tag);
+        //     if((SGX_SUCCESS != ret)  || (SGX_SUCCESS != status))
+        //     {
+        //         fprintf(OUTPUT, "\nError, attestation result message secret "
+        //                         "using SK based AESGCM failed in [%s]. ret = "
+        //                         "0x%0x. status = 0x%0x", __FUNCTION__, ret,
+        //                          status);
+        //         goto CLEANUP;
+        //     }
+        // }
         fprintf(OUTPUT, "\nEnclave app: Shared secret successfully received from client.");
         fprintf(OUTPUT, "\nEnclave app: Remote attestation success!");
 
